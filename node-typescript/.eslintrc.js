@@ -5,6 +5,7 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'plugin:editorconfig/noconflict',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:import/errors',
@@ -13,12 +14,13 @@ module.exports = {
     'plugin:promise/recommended',
     'plugin:array-func/all',
     'plugin:node/recommended',
+    'plugin:security-node/recommended',
     'plugin:unicorn/recommended',
     'plugin:eslint-comments/recommended',
     'plugin:prettier/recommended',
     'plugin:jest/all',
     'prettier',
-    'prettier/prettier'
+    'prettier/prettier',
   ],
   overrides: [
     {
@@ -90,6 +92,9 @@ module.exports = {
     'jest',
     '@typescript-eslint',
     'simple-import-sort',
+    'editorconfig',
+    'security-node',
+    'function-name',
   ],
   root: true,
   rules: {
@@ -159,7 +164,8 @@ module.exports = {
       },
     ],
     'no-loss-of-precision': 'warn',
-    'promise/no-nesting': 'error',
+    'promise/no-nesting': 'error',,
+    'function-name/starts-with-verb': 'error'
   },
   settings: {
     'import/parsers': {

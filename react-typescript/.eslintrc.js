@@ -6,6 +6,7 @@ module.exports = {
   extends: [
     'airbnb',
     'airbnb-typescript',
+    'plugin:editorconfig/noconflict',
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
@@ -17,6 +18,8 @@ module.exports = {
     'plugin:prettier/recommended',
     'plugin:jest/all',
     'plugin:postcss-modules/recommended',
+    'plugin:react-redux/recommended',
+    'plugin:compat/recommended',
     'prettier',
   ],
   overrides: [
@@ -32,7 +35,7 @@ module.exports = {
         '@typescript-eslint/no-var-requires': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         'no-console': 'off',
-        'unicorn/prefer-module': 'off'
+        'unicorn/prefer-module': 'off',
       },
     },
     {
@@ -99,6 +102,10 @@ module.exports = {
     'react-perf',
     'simple-import-sort',
     'postcss-modules',
+    'editorconfig',
+    'react-redux',
+    'function-name',
+    'compat',
   ],
   root: true,
   rules: {
@@ -174,6 +181,7 @@ module.exports = {
     'react-perf/jsx-no-jsx-as-prop': 'warn',
     '@typescript-eslint/no-type-alias': 'off',
     'react/react-in-jsx-scope': 'off',
+    'function-name/starts-with-verb': 'error',
   },
   settings: {
     'import/parsers': {

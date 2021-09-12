@@ -5,9 +5,11 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'plugin:editorconfig/noconflict',
     'plugin:promise/recommended',
     'plugin:array-func/all',
     'plugin:node/recommended',
+    'plugin:security-node/recommended',
     'plugin:unicorn/all',
     'plugin:eslint-comments/recommended',
     'plugin:prettier/recommended',
@@ -69,6 +71,9 @@ module.exports = {
     'eslint-comments',
     'jest',
     'simple-import-sort',
+    'editorconfig',
+    'security-node',
+    'function-name',
   ],
   root: true,
   rules: {
@@ -130,5 +135,6 @@ module.exports = {
     ],
     'no-loss-of-precision': 'warn',
     'promise/no-nesting': 'error',
+    'function-name/starts-with-verb': 'error'
   },
 };
