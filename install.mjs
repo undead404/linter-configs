@@ -23,7 +23,7 @@ if (Number.parseInt(nodeVersion, 10) < MIN_NODE_VERSION) {
 function download(url, directory = '.', fileName = null) {
   const urlParts = url.split('/');
   const file = createWriteStream(
-    path.join(directory, fileName || urlParts.at(-1)),
+    path.join(directory, fileName || urlParts[urlParts.length - 1]),
   );
   return new Promise((resolve, reject) =>
     get(url, (response) => {
