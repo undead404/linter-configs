@@ -17,9 +17,11 @@ if (parseInt(nodeVersion) < 12) {
   process.exit(1);
 }
 
-function download(url, dir = '.') {
+function download(url, dir = '.', fileName = null) {
   const urlParts = url.split('/');
-  const file = createWriteStream(path.join(dir, urlParts[urlParts.length - 1]));
+  const file = createWriteStream(
+    path.join(dir, fileName || urlParts[urlParts.length - 1]),
+  );
   return new Promise((resolve, reject) =>
     get(url, function (response) {
       response.pipe(file).on('close', resolve).on('error', reject);
@@ -128,27 +130,27 @@ async function main() {
   if (USE_REACT) {
     if (USE_TYPESCRIPT) {
       await download(
-        'https://github.com/undead404/linter-configs/raw/main/react-typescript/.eslintrc.js',
+        'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/react-typescript/.eslintrc.js',
       );
     } else {
       await download(
-        'https://github.com/undead404/linter-configs/raw/main/react/.eslintrc.js',
+        'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/react/.eslintrc.js',
       );
     }
     await download(
-      'https://github.com/undead404/linter-configs/raw/main/react/.stylelintignore',
+      'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/react/.stylelintignore',
     );
     await download(
-      'https://github.com/undead404/linter-configs/raw/main/react/.stylelintrc.js',
+      'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/react/.stylelintrc.js',
     );
   } else {
     if (USE_TYPESCRIPT) {
       await download(
-        'https://github.com/undead404/linter-configs/raw/main/node-typescript/.eslintrc.js',
+        'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/node-typescript/.eslintrc.js',
       );
     } else {
       await download(
-        'https://github.com/undead404/linter-configs/raw/main/node/.eslintrc.js',
+        'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/node/.eslintrc.js',
       );
     }
   }
@@ -162,8 +164,9 @@ async function main() {
     }
   }
   await download(
-    'https://raw.githubusercontent.com/undead404/linter-configs/main/.vscode/settings.json',
+    'https://raw.githubusercontent.com/undead404/linter-configs/main/vscode-settings.json',
     '.vscode',
+    'settings.json',
   );
   delete packageData['eslintConfig'];
   if (packageData.scripts) {
