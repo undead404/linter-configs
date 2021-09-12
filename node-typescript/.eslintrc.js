@@ -5,6 +5,7 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'airbnb-typescript/base',
     'plugin:editorconfig/noconflict',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
