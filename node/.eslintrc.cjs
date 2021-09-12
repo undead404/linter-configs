@@ -136,6 +136,7 @@ module.exports = {
     'promise/no-nesting': 'error',
     'unicorn/prefer-node-protocol': 'off',
     'security-node/detect-crlf': 'warn',
-    'unicorn/no-unsafe-regex': 'warn'
+    'unicorn/no-unsafe-regex': 'warn',
+    'unicorn/prefer-at': 'off'
   },
 };

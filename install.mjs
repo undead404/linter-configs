@@ -12,19 +12,22 @@ import { get } from 'https';
 import path from 'path';
 
 const MIN_NODE_VERSION = 12;
-
+const JSON_PADDING = 2;
+const ERROR_CODE = 400;
 const nodeVersion = process.versions.node.split('.')[0];
 if (Number.parseInt(nodeVersion, 10) < MIN_NODE_VERSION) {
   console.error('Node.js version < 12, not supported');
   process.exit(1);
 }
 
-function download(url, dir = '.', fileName = null) {
+function download(url, directory = '.', fileName = null) {
   const urlParts = url.split('/');
-  const file = createWriteStream(path.join(dir, fileName || urlParts.at(-1)));
+  const file = createWriteStream(
+    path.join(directory, fileName || urlParts.at(-1)),
+  );
   return new Promise((resolve, reject) =>
-    get(url, function (response) {
-      if (response.statusCode >= 400) {
+    get(url, (response) => {
+      if (response.statusCode >= ERROR_CODE) {
         console.error(
           `Failed to download from ${url}: ${response.statusCode} ${response.statusMessage}`,
         );
@@ -52,7 +55,7 @@ async function execute(command) {
 
 async function exists(fileName) {
   try {
-    await access('yarn.lock', constants.F_OK);
+    await access(fileName, constants.F_OK);
     return true;
   } catch {
     return false;
@@ -170,7 +173,7 @@ async function main() {
     'settings.json',
   );
   delete packageData.eslintConfig;
-  const newScripts = USE_REACT
+  const scriptsToAdd = USE_REACT
     ? {
         fix: USE_TYPESCRIPT
           ? 'NODE_ENV=development eslint src --ext .ts --ext .tsx --fix'
@@ -185,9 +188,12 @@ async function main() {
       };
   packageData.scripts = {
     ...packageData.scripts,
-    ...newScripts,
+    ...scriptsToAdd,
   };
-  await writeFile('package.json', JSON.stringify(packageData, null, 2));
+  await writeFile(
+    'package.json',
+    JSON.stringify(packageData, null, JSON_PADDING),
+  );
   await (USE_YARN ? execute('yarn fix') : execute('npm run fix'));
 }
 
