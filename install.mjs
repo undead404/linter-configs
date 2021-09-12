@@ -24,8 +24,10 @@ function download(url, dir = '.', fileName = null) {
   );
   return new Promise((resolve, reject) =>
     get(url, function (response) {
-      if(response.statusCode >= 400) {
-        console.error(`Failed to download from ${url}: ${response.statusCode} ${response.statusMessage}`);
+      if (response.statusCode >= 400) {
+        console.error(
+          `Failed to download from ${url}: ${response.statusCode} ${response.statusMessage}`,
+        );
         process.exit(1);
       }
       response.pipe(file).on('close', resolve).on('error', reject);
@@ -173,15 +175,23 @@ async function main() {
     'settings.json',
   );
   delete packageData['eslintConfig'];
-  if (packageData.scripts) {
-    packageData.scripts.fix = 'eslint src --fix';
-    packageData.scripts.lint = 'eslint src';
-  } else {
-    packageData.scripts = {
-      fix: 'eslint src --fix',
-      lint: 'eslint src',
-    };
-  }
+  const newScripts = USE_REACT
+    ? {
+        fix: USE_TYPESCRIPT
+          ? 'NODE_ENV=development eslint src --ext .ts --ext .tsx --fix'
+          : 'NODE_ENV=development eslint src --ext .js --ext .jsx --fix',
+        lint: USE_TYPESCRIPT
+          ? 'NODE_ENV=development eslint src --ext .ts --ext .tsx'
+          : 'NODE_ENV=development eslint src --ext .js --ext .jsx',
+      }
+    : {
+        fix: 'eslint src --fix',
+        lint: 'eslint src',
+      };
+  packageData.scripts = {
+    ...(packageData.scripts || {}),
+    ...newScripts,
+  };
   await writeFile('package.json', JSON.stringify(packageData, null, 2));
   if (USE_YARN) {
     await execute('yarn fix');

@@ -128,6 +128,7 @@ module.exports = {
       {
         groups: [
           // Node.js builtins.
+          // eslint-disable-next-line global-require
           [`^(${require('module').builtinModules.join('|')})(/|$)`],
           // Packages.
           ['^@?(\\w|.)[^./]'],
