@@ -11,17 +11,17 @@ import {
 import { get } from 'https';
 import path from 'path';
 
+const MIN_NODE_VERSION = 12;
+
 const nodeVersion = process.versions.node.split('.')[0];
-if (parseInt(nodeVersion) < 12) {
+if (Number.parseInt(nodeVersion, 10) < MIN_NODE_VERSION) {
   console.error('Node.js version < 12, not supported');
   process.exit(1);
 }
 
 function download(url, dir = '.', fileName = null) {
   const urlParts = url.split('/');
-  const file = createWriteStream(
-    path.join(dir, fileName || urlParts[urlParts.length - 1]),
-  );
+  const file = createWriteStream(path.join(dir, fileName || urlParts.at(-1)));
   return new Promise((resolve, reject) =>
     get(url, function (response) {
       if (response.statusCode >= 400) {
@@ -62,8 +62,8 @@ async function exists(fileName) {
 async function main() {
   console.debug('main()');
   const USE_YARN = await exists('yarn.lock');
-  const packageJson = await readFile('package.json');
-  const packageData = JSON.parse(packageJson);
+  let packageJson = await readFile('package.json');
+  let packageData = JSON.parse(packageJson);
   const USE_REACT = packageData.dependencies && packageData.dependencies.react;
   const USE_TYPESCRIPT = await exists('tsconfig.json');
   const packages = [
@@ -109,11 +109,11 @@ async function main() {
   }
 
   packages.sort();
-  if (USE_YARN) {
-    await execute(`yarn add -D ${packages.join(' ')}`);
-  } else {
-    await execute(`npm i -D ${packages.join(' ')}`);
-  }
+  await (USE_YARN
+    ? execute(`yarn add -D ${packages.join(' ')}`)
+    : execute(`npm i -D ${packages.join(' ')}`));
+  packageJson = await readFile('package.json');
+  packageData = JSON.parse(packageJson);
   await Promise.all(
     (await readdir('.'))
       .filter(
@@ -133,31 +133,27 @@ async function main() {
     'https://raw.githubusercontent.com/undead404/linter-configs/main/.prettierrc.cjs',
   );
   if (USE_REACT) {
-    if (USE_TYPESCRIPT) {
-      await download(
-        'https://raw.githubusercontent.com/undead404/linter-configs/main/react-typescript/.eslintrc.js',
-      );
-    } else {
-      await download(
-        'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.eslintrc.js',
-      );
-    }
+    await (USE_TYPESCRIPT
+      ? download(
+          'https://raw.githubusercontent.com/undead404/linter-configs/main/react-typescript/.eslintrc.js',
+        )
+      : download(
+          'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.eslintrc.js',
+        ));
     await download(
       'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.stylelintignore',
     );
     await download(
       'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.stylelintrc.js',
     );
+  } else if (USE_TYPESCRIPT) {
+    await download(
+      'https://raw.githubusercontent.com/undead404/linter-configs/main/node-typescript/.eslintrc.js',
+    );
   } else {
-    if (USE_TYPESCRIPT) {
-      await download(
-        'https://raw.githubusercontent.com/undead404/linter-configs/main/node-typescript/.eslintrc.js',
-      );
-    } else {
-      await download(
-        'https://raw.githubusercontent.com/undead404/linter-configs/main/node/.eslintrc.js',
-      );
-    }
+    await download(
+      'https://raw.githubusercontent.com/undead404/linter-configs/main/node/.eslintrc.js',
+    );
   }
   if (!(await exists('.vscode'))) {
     try {
@@ -173,7 +169,7 @@ async function main() {
     '.vscode',
     'settings.json',
   );
-  delete packageData['eslintConfig'];
+  delete packageData.eslintConfig;
   const newScripts = USE_REACT
     ? {
         fix: USE_TYPESCRIPT
@@ -188,15 +184,11 @@ async function main() {
         lint: 'eslint src',
       };
   packageData.scripts = {
-    ...(packageData.scripts || {}),
+    ...packageData.scripts,
     ...newScripts,
   };
   await writeFile('package.json', JSON.stringify(packageData, null, 2));
-  if (USE_YARN) {
-    await execute('yarn fix');
-  } else {
-    await execute('npm run fix');
-  }
+  await (USE_YARN ? execute('yarn fix') : execute('npm run fix'));
 }
 
 void main();

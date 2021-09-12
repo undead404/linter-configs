@@ -169,6 +169,7 @@ module.exports = {
     '@typescript-eslint/naming-convention': 'error',
     'unicorn/prefer-node-protocol': 'off',
     'security-node/detect-crlf': 'warn',
+    'unicorn/no-unsafe-regex': 'warn'
   },
   settings: {
     'import/parsers': {

@@ -159,6 +159,7 @@ module.exports = {
     'react-perf/jsx-no-jsx-as-prop': 'warn',
     'react/react-in-jsx-scope': 'off',
     'unicorn/prefer-node-protocol': 'off',
+    'unicorn/no-unsafe-regex': 'warn'
   },
   settings: {
     'import/resolver': {
