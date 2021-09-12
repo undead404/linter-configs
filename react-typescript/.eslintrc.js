@@ -183,6 +183,7 @@ module.exports = {
     '@typescript-eslint/no-type-alias': 'off',
     'react/react-in-jsx-scope': 'off',
     'function-name/starts-with-verb': 'error',
+    'unicorn/prefer-node-protocol': 'off',
   },
   settings: {
     'import/parsers': {
