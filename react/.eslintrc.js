@@ -86,7 +86,6 @@ module.exports = {
     'postcss-modules',
     'editorconfig',
     'react-redux',
-    'function-name',
     'compat'
   ],
   root: true,
@@ -159,7 +158,6 @@ module.exports = {
     'react-perf/jsx-no-new-function-as-prop': 'warn',
     'react-perf/jsx-no-jsx-as-prop': 'warn',
     'react/react-in-jsx-scope': 'off',
-    'function-name/starts-with-verb': 'error',
     'unicorn/prefer-node-protocol': 'off',
   },
   settings: {

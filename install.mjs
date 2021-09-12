@@ -72,7 +72,6 @@ async function main() {
     'eslint-plugin-array-func',
     'eslint-plugin-editorconfig',
     'eslint-plugin-eslint-comments',
-    'eslint-plugin-function-name',
     'eslint-plugin-import',
     'eslint-plugin-jest',
     'eslint-plugin-prettier',

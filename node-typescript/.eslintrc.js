@@ -95,7 +95,6 @@ module.exports = {
     'simple-import-sort',
     'editorconfig',
     'security-node',
-    'function-name',
   ],
   root: true,
   rules: {
@@ -167,7 +166,7 @@ module.exports = {
     ],
     'no-loss-of-precision': 'warn',
     'promise/no-nesting': 'error',
-    'function-name/starts-with-verb': 'error',
+    '@typescript-eslint/naming-convention': 'error',
     'unicorn/prefer-node-protocol': 'off',
     'security-node/detect-crlf': 'warn',
   },
