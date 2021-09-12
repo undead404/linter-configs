@@ -135,6 +135,7 @@ module.exports = {
     ],
     'no-loss-of-precision': 'warn',
     'promise/no-nesting': 'error',
-    'function-name/starts-with-verb': 'error'
+    'function-name/starts-with-verb': 'error',
+    'unicorn/prefer-node-protocol': 'off'
   },
 };

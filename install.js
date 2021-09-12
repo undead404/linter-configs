@@ -1,0 +1,186 @@
+import { exec } from 'child_process';
+import { constants, createWriteStream } from 'fs';
+import {
+  access,
+  mkdir,
+  readdir,
+  readFile,
+  unlink,
+  writeFile,
+} from 'fs/promises';
+import { get } from 'https';
+import path from 'path';
+
+const nodeVersion = process.versions.node.split('.')[0];
+if (parseInt(nodeVersion) < 12) {
+  console.error('Node.js version < 12, not supported');
+  process.exit(1);
+}
+
+function download(url, dir = '.') {
+  const urlParts = url.split('/');
+  const file = createWriteStream(path.join(dir, urlParts[urlParts.length - 1]));
+  return new Promise((resolve, reject) =>
+    get(url, function (response) {
+      response.pipe(file).on('close', resolve).on('error', reject);
+    }).on('error', reject),
+  );
+}
+
+async function execute(command) {
+  console.debug(command);
+  const statusCode = await new Promise((resolve, reject) => {
+    const process = exec(command);
+    process.on('error', reject);
+    process.on('close', resolve);
+    process.stdout.on('data', (data) => console.debug(data));
+    process.stderr.on('data', (data) => console.warn(data));
+  });
+
+  if (statusCode) {
+    throw new Error('Failure');
+  }
+}
+
+async function exists(fileName) {
+  try {
+    await access('yarn.lock', constants.F_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function main() {
+  console.debug('main()');
+  const USE_YARN = await exists('yarn.lock');
+  const packageJson = await readFile('package.json');
+  const packageData = JSON.parse(packageJson);
+  const USE_REACT = packageData.dependencies && packageData.dependencies.react;
+  const USE_TYPESCRIPT = await exists('tsconfig.json');
+  const packages = [
+    'eslint',
+    'eslint-config-prettier',
+    'eslint-plugin-array-func',
+    'eslint-plugin-editorconfig',
+    'eslint-plugin-eslint-comments',
+    'eslint-plugin-function-name',
+    'eslint-plugin-import',
+    'eslint-plugin-jest',
+    'eslint-plugin-prettier',
+    'eslint-plugin-simple-import-sort',
+    'eslint-plugin-promise',
+    'eslint-plugin-unicorn',
+    'jest',
+    'prettier',
+  ];
+  if (USE_REACT) {
+    packages.push(
+      'eslint-config-airbnb',
+      'eslint-plugin-compat',
+      'eslint-plugin-postcss-modules',
+      'eslint-plugin-react',
+      'eslint-plugin-react-hooks',
+      'eslint-plugin-react-perf',
+      'eslint-plugin-react-redux',
+      'stylelint',
+      'stylelint-config-standard',
+      'stylelint-order',
+    );
+  } else {
+    packages.push(
+      'eslint-config-airbnb-base',
+      'eslint-plugin-node',
+      'eslint-plugin-security-node',
+    );
+  }
+  if (USE_TYPESCRIPT) {
+    packages.push(
+      '@typescript-eslint/eslint-plugin',
+      '@typescript-eslint/parser',
+    );
+  }
+
+  packages.sort();
+  if (USE_YARN) {
+    await execute(`yarn add -D ${packages.join(' ')}`);
+  } else {
+    await execute(`npm i -D ${packages.join(' ')}`);
+  }
+  await Promise.all(
+    (await readdir('.'))
+      .filter(
+        (fileName) =>
+          /^\.eslintrc(\..*)?$/.test(fileName) ||
+          /^\.prettierrc(\..*)?$/.test(fileName),
+      )
+      .map((fileName) => unlink(path.join('.', fileName))),
+  );
+  await download(
+    'https://raw.githubusercontent.com/undead404/linter-configs/main/.editorconfig',
+  );
+  await download(
+    'https://raw.githubusercontent.com/undead404/linter-configs/main/.eslintignore',
+  );
+  await download(
+    'https://raw.githubusercontent.com/undead404/linter-configs/main/.prettierrc.cjs',
+  );
+  if (USE_REACT) {
+    if (USE_TYPESCRIPT) {
+      await download(
+        'https://github.com/undead404/linter-configs/raw/main/react-typescript/.eslintrc.js',
+      );
+    } else {
+      await download(
+        'https://github.com/undead404/linter-configs/raw/main/react/.eslintrc.js',
+      );
+    }
+    await download(
+      'https://github.com/undead404/linter-configs/raw/main/react/.stylelintignore',
+    );
+    await download(
+      'https://github.com/undead404/linter-configs/raw/main/react/.stylelintrc.js',
+    );
+  } else {
+    if (USE_TYPESCRIPT) {
+      await download(
+        'https://github.com/undead404/linter-configs/raw/main/node-typescript/.eslintrc.js',
+      );
+    } else {
+      await download(
+        'https://github.com/undead404/linter-configs/raw/main/node/.eslintrc.js',
+      );
+    }
+  }
+  if (!(await exists('.vscode'))) {
+    try {
+      await mkdir('.vscode');
+    } catch (error) {
+      if (!error.toString().includes('file already exists')) {
+        throw error;
+      }
+    }
+  }
+  await download(
+    'https://raw.githubusercontent.com/undead404/linter-configs/main/.vscode/settings.json',
+    '.vscode',
+  );
+  delete packageData['eslintConfig'];
+  if (packageData.scripts) {
+    packageData.scripts.fix = 'eslint src --fix';
+    packageData.scripts.lint = 'eslint src';
+  } else {
+    packageData.scripts = {
+      fix: 'eslint src --fix',
+      lint: 'eslint src',
+    };
+  }
+  await writeFile('package.json', JSON.stringify(packageData, null, 2));
+  if (USE_YARN) {
+    await execute('yarn fix');
+  } else {
+    await execute('npm run fix');
+  }
+}
+
+void main();
