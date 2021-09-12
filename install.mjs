@@ -24,6 +24,10 @@ function download(url, dir = '.', fileName = null) {
   );
   return new Promise((resolve, reject) =>
     get(url, function (response) {
+      if(response.statusCode >= 400) {
+        console.error(`Failed to download from ${url}: ${response.statusCode} ${response.statusMessage}`);
+        process.exit(1);
+      }
       response.pipe(file).on('close', resolve).on('error', reject);
     }).on('error', reject),
   );
@@ -130,27 +134,27 @@ async function main() {
   if (USE_REACT) {
     if (USE_TYPESCRIPT) {
       await download(
-        'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/react-typescript/.eslintrc.js',
+        'https://raw.githubusercontent.com/undead404/linter-configs/main/react-typescript/.eslintrc.js',
       );
     } else {
       await download(
-        'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/react/.eslintrc.js',
+        'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.eslintrc.js',
       );
     }
     await download(
-      'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/react/.stylelintignore',
+      'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.stylelintignore',
     );
     await download(
-      'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/react/.stylelintrc.js',
+      'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.stylelintrc.js',
     );
   } else {
     if (USE_TYPESCRIPT) {
       await download(
-        'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/node-typescript/.eslintrc.js',
+        'https://raw.githubusercontent.com/undead404/linter-configs/main/node-typescript/.eslintrc.js',
       );
     } else {
       await download(
-        'https://raw.githubusercontent.com/undead404/linter-configs/raw/main/node/.eslintrc.js',
+        'https://raw.githubusercontent.com/undead404/linter-configs/main/node/.eslintrc.js',
       );
     }
   }

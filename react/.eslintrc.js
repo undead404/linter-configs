@@ -157,7 +157,7 @@ module.exports = {
     'react-perf/jsx-no-new-array-as-prop': 'warn',
     'react-perf/jsx-no-new-function-as-prop': 'warn',
     'react-perf/jsx-no-jsx-as-prop': 'warn',
-    'react/react-in-jsx-scope': 'off',,
+    'react/react-in-jsx-scope': 'off',
     'function-name/starts-with-verb': 'error'
   },
   settings: {
