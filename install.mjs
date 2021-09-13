@@ -103,7 +103,7 @@ async function main() {
       'stylelint-order',
     );
     if (!USE_TYPESCRIPT) {
-      packages.push('@babel/eslint-parser', 'cross-env');
+      packages.push('@babel/eslint-parser', '@babel/preset-react');
     }
   } else {
     packages.push(
@@ -191,10 +191,10 @@ async function main() {
     ? {
         fix: USE_TYPESCRIPT
           ? 'eslint . --ext .ts --ext .tsx --fix'
-          : 'cross-env NODE_ENV=development eslint . --ext .js --ext .jsx --fix',
+          : 'eslint . --ext .js --ext .jsx --fix',
         lint: USE_TYPESCRIPT
           ? 'eslint . --ext .ts --ext .tsx'
-          : 'cross-env NODE_ENV=development eslint . --ext .js --ext .jsx',
+          : 'eslint . --ext .js --ext .jsx',
       }
     : {
         fix: 'eslint . --fix',
