@@ -90,6 +90,7 @@ async function main() {
   ];
   if (USE_REACT) {
     packages.push(
+      'deasync',
       'eslint-config-airbnb',
       'eslint-plugin-compat',
       'eslint-plugin-jsx-a11y',
