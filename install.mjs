@@ -97,6 +97,9 @@ async function main() {
       'stylelint-config-standard',
       'stylelint-order',
     );
+    if (!USE_TYPESCRIPT) {
+      packages.push('@babel/eslint-parser');
+    }
   } else {
     packages.push(
       'eslint-config-airbnb-base',
