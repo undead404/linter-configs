@@ -112,6 +112,7 @@ async function main() {
     packages.push(
       '@typescript-eslint/eslint-plugin',
       '@typescript-eslint/parser',
+      'eslint-config-airbnb-typescript',
     );
   }
 
