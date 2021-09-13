@@ -190,11 +190,11 @@ async function main() {
   const scriptsToAdd = USE_REACT
     ? {
         fix: USE_TYPESCRIPT
-          ? 'cross-env NODE_ENV=development eslint . --ext .ts --ext .tsx --fix'
+          ? 'eslint . --ext .ts --ext .tsx --fix'
           : 'cross-env NODE_ENV=development eslint . --ext .js --ext .jsx --fix',
         lint: USE_TYPESCRIPT
           ? 'eslint . --ext .ts --ext .tsx'
-          : 'eslint . --ext .js --ext .jsx',
+          : 'cross-env NODE_ENV=development eslint . --ext .js --ext .jsx',
       }
     : {
         fix: 'eslint . --fix',
