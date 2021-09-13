@@ -183,7 +183,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/naming-convention': 'error',
     'unicorn/prefer-node-protocol': 'off',
-    'unicorn/no-unsafe-regex': 'warn'
+    'unicorn/no-unsafe-regex': 'warn',
   },
   settings: {
     'import/parsers': {

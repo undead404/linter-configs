@@ -68,6 +68,10 @@ async function main() {
   let packageJson = await readFile('package.json');
   let packageData = JSON.parse(packageJson);
   const USE_REACT = packageData.dependencies && packageData.dependencies.react;
+  const USE_CRA =
+    USE_REACT &&
+    packageData.dependencies &&
+    packageData.dependencies['react-scripts'];
   const USE_TYPESCRIPT = await exists('tsconfig.json');
   const packages = [
     'eslint',
@@ -99,7 +103,7 @@ async function main() {
       'stylelint-order',
     );
     if (!USE_TYPESCRIPT) {
-      packages.push('@babel/eslint-parser');
+      packages.push('@babel/eslint-parser', 'cross-env');
     }
   } else {
     packages.push(
@@ -140,6 +144,9 @@ async function main() {
   await download(
     'https://raw.githubusercontent.com/undead404/linter-configs/main/.prettierrc.cjs',
   );
+  await download(
+    'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.stylelintignore',
+  );
   if (USE_REACT) {
     await (USE_TYPESCRIPT
       ? download(
@@ -149,9 +156,6 @@ async function main() {
           'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.eslintrc.js',
         ));
     await download(
-      'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.stylelintignore',
-    );
-    await download(
       'https://raw.githubusercontent.com/undead404/linter-configs/main/react/.stylelintrc.js',
     );
   } else if (USE_TYPESCRIPT) {
@@ -160,7 +164,12 @@ async function main() {
     );
   } else {
     await download(
-      'https://raw.githubusercontent.com/undead404/linter-configs/main/node/.eslintrc.js',
+      'https://raw.githubusercontent.com/undead404/linter-configs/main/node/.eslintrc.cjs',
+    );
+  }
+  if (USE_CRA) {
+    await download(
+      'https://raw.githubusercontent.com/undead404/linter-configs/main/react/babel.config.js',
     );
   }
   if (!(await exists('.vscode'))) {
@@ -181,15 +190,15 @@ async function main() {
   const scriptsToAdd = USE_REACT
     ? {
         fix: USE_TYPESCRIPT
-          ? 'eslint src --ext .ts --ext .tsx --fix'
-          : 'eslint src --ext .js --ext .jsx --fix',
+          ? 'cross-env NODE_ENV=development eslint . --ext .ts --ext .tsx --fix'
+          : 'cross-env NODE_ENV=development eslint . --ext .js --ext .jsx --fix',
         lint: USE_TYPESCRIPT
-          ? 'eslint src --ext .ts --ext .tsx'
-          : 'eslint src --ext .js --ext .jsx',
+          ? 'eslint . --ext .ts --ext .tsx'
+          : 'eslint . --ext .js --ext .jsx',
       }
     : {
-        fix: 'eslint src --fix',
-        lint: 'eslint src',
+        fix: 'eslint . --fix',
+        lint: 'eslint .',
       };
   packageData.scripts = {
     ...packageData.scripts,
