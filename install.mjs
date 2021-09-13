@@ -88,6 +88,7 @@ async function main() {
     packages.push(
       'eslint-config-airbnb',
       'eslint-plugin-compat',
+      'eslint-plugin-jsx-a11y',
       'eslint-plugin-postcss-modules',
       'eslint-plugin-react',
       'eslint-plugin-react-hooks',
@@ -179,11 +180,11 @@ async function main() {
   const scriptsToAdd = USE_REACT
     ? {
         fix: USE_TYPESCRIPT
-          ? 'NODE_ENV=development eslint src --ext .ts --ext .tsx --fix'
-          : 'NODE_ENV=development eslint src --ext .js --ext .jsx --fix',
+          ? 'eslint src --ext .ts --ext .tsx --fix'
+          : 'eslint src --ext .js --ext .jsx --fix',
         lint: USE_TYPESCRIPT
-          ? 'NODE_ENV=development eslint src --ext .ts --ext .tsx'
-          : 'NODE_ENV=development eslint src --ext .js --ext .jsx',
+          ? 'eslint src --ext .ts --ext .tsx'
+          : 'eslint src --ext .js --ext .jsx',
       }
     : {
         fix: 'eslint src --fix',
